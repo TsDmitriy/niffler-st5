@@ -40,7 +40,7 @@ public class SpendingTest {
 
 
     @GenerateCategory(
-            category = "Обучение1222",
+            category = "Обучение",
             username = username
     )
 
