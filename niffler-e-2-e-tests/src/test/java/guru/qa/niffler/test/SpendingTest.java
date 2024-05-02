@@ -59,6 +59,6 @@ public class SpendingTest {
 
         mainPage.chooseSpending(rowWithSpending)
                 .deleteSpending()
-                .checkCountOfSpendings(0);
+                .checkCountOfSpendings(expectedSize);
     }
 }
