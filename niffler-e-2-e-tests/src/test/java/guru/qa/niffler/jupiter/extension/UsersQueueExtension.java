@@ -3,6 +3,7 @@ package guru.qa.niffler.jupiter.extension;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.UserJson;
 import io.qameta.allure.Allure;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -16,57 +17,84 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedDeque;
+
 import static guru.qa.niffler.model.UserJson.userForTest;
+
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class UsersQueueExtension implements BeforeEachCallback, AfterEachCallback, ParameterResolver {
 
-    private static final Queue<UserJson> USERS_INVITE_SENT = new ConcurrentLinkedDeque<>();
-    private static final Queue<UserJson> USERS_INVITE_RECEIVED = new ConcurrentLinkedDeque<>();
-    private static final Queue<UserJson> USERS_FRIEND = new ConcurrentLinkedDeque<>();
+    private static final Map<User.Selector, Queue<UserJson>> USERS = new ConcurrentHashMap<>();
 
     public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(UsersQueueExtension.class);
 
     static {
-        USERS_FRIEND.add(userForTest("dotsarev", "dotsarev"));
-        USERS_INVITE_SENT.add(userForTest("CAT", "CAT"));
-        USERS_INVITE_RECEIVED.add(userForTest("DOG", "DOG"));
+
+        USERS.put(User.Selector.FRIEND, new ConcurrentLinkedQueue<>(
+                List.of(userForTest("dotsarev", "dotsarev")))
+        );
+        USERS.put(User.Selector.INVITE_RECEIVED, new ConcurrentLinkedQueue<>(
+                List.of(userForTest("DOG", "DOG")))
+        );
+        USERS.put(User.Selector.INVITE_SENT, new ConcurrentLinkedQueue<>(
+                List.of(userForTest("CAT", "CAT")))
+        );
     }
 
     @Override
     public void beforeEach(ExtensionContext context) {
 
-        List<User> usersTypeList = Arrays.stream(context.getRequiredTestMethod().getParameters())
-                .filter(p -> AnnotationSupport.isAnnotated(p, User.class))
-                .map(p -> p.getAnnotation(User.class))
+        Method testMethod = context.getRequiredTestMethod();
+
+        List<Method> beforeEachMethods = Arrays.stream(
+                context.getRequiredTestClass().getDeclaredMethods()
+        ).filter(i -> i.isAnnotationPresent(BeforeEach.class)).toList();
+
+        List<Method> methods = new ArrayList<>();
+        methods.add(testMethod);
+        methods.addAll(beforeEachMethods);
+
+        List<Parameter> parameters = methods.stream()
+                .flatMap(m -> Arrays.stream(m.getParameters()))
+                .filter(p -> p.isAnnotationPresent(User.class))
                 .toList();
 
-        Map<User.Selector, List<UserJson>> usersByType = new HashMap<>();
-        usersTypeList.forEach(userType -> usersByType.computeIfAbsent(userType.selector(), k -> new ArrayList<>()));
-
-        for (User userType : usersTypeList) {
-            User.Selector selector = userType.selector();
+        Map<User.Selector, List<UserJson>> users = new HashMap<>();
+        for (Parameter parameter : parameters) {
+            User.Selector selector = parameter.getAnnotation(User.class).selector();
 
             UserJson userForTest = null;
+
+            Queue<UserJson> queue = USERS.get(selector);
+
             while (userForTest == null) {
-                userForTest = switch (selector) {
-                    case INVITE_RECEIVED -> USERS_INVITE_RECEIVED.poll();
-                    case INVITE_SENT -> USERS_INVITE_SENT.poll();
-                    case FRIEND -> USERS_FRIEND.poll();
-                };
+                userForTest = queue.poll();
             }
-            usersByType.get(selector).add(userForTest);
+
+            /*
+            Данный if необходим для случая, если в тесте передается две одинаковых аннотации(например FRIEND),
+            чтобы у нас было два разных юзера с одним типом (например FRIEND).
+             */
+            if (users.containsKey(selector)) {
+                List<UserJson> userList = new ArrayList<>(users.get(selector));
+                userList.add(userForTest);
+                users.put(selector, userList);
+            } else {
+                users.put(selector, List.of(userForTest));
+            }
+
+            context.getStore(NAMESPACE).put(context.getUniqueId(), users);
+
+            Allure.getLifecycle().updateTestCase(testCase -> testCase.setStart(new Date().getTime()));
         }
-
-        context.getStore(NAMESPACE).put(context.getUniqueId(), usersByType);
-
-        Allure.getLifecycle().updateTestCase(testCase -> testCase.setStart(new Date().getTime()));
     }
 
 
@@ -74,17 +102,8 @@ public class UsersQueueExtension implements BeforeEachCallback, AfterEachCallbac
     public void afterEach(ExtensionContext extensionContext) {
         Map<User.Selector, List<UserJson>> usersFromTest =
                 extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId(), Map.class);
-
-        if (usersFromTest != null) {
-            usersFromTest.forEach((userType, userList) -> {
-                userList.forEach(user -> {
-                    switch (userType) {
-                        case INVITE_RECEIVED -> USERS_INVITE_RECEIVED.add(user);
-                        case INVITE_SENT -> USERS_INVITE_SENT.add(user);
-                        case FRIEND -> USERS_FRIEND.add(user);
-                    }
-                });
-            });
+        for (Map.Entry<User.Selector, List<UserJson>> users : usersFromTest.entrySet()) {
+            USERS.get(users.getKey()).addAll(users.getValue());
         }
     }
 
@@ -96,16 +115,29 @@ public class UsersQueueExtension implements BeforeEachCallback, AfterEachCallbac
 
     @Override
     public UserJson resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+        User.Selector selector = parameterContext.getParameter().getAnnotation(User.class).selector();
 
-        Optional<User> annotation = AnnotationSupport.findAnnotation(parameterContext.getParameter(), User.class);
+        Map<User.Selector, List<UserJson>> users = extensionContext
+                .getStore(NAMESPACE)
+                .get(extensionContext.getUniqueId(), Map.class);
 
-        User.Selector userType = annotation.get().selector();
+        List<UserJson> userList = users.get(selector);
+        UserJson user = null;
 
-        Map<User.Selector, List<UserJson>> users =
-                extensionContext.getStore(NAMESPACE)
-                        .get(extensionContext.getUniqueId(), Map.class);
-        List<UserJson> userList = users.get(userType);
+        if (userList != null && !userList.isEmpty()) {
+            /*
+            Данный if необходим для случая, если в тесте передается две одинаковых аннотации(например FRIEND),
+            чтобы передавать в тест юзера который еще туда не был передан ранее.
+             */
+            if (userList.size() > 1) {
+                user = userList.getFirst();
+                userList.remove(user);
+            } else {
+                user = userList.getFirst();
+            }
+        }
 
-        return  userList.getFirst();
+        return user;
     }
 }
+

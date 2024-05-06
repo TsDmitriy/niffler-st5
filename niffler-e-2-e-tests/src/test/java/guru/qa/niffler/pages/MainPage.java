@@ -62,7 +62,7 @@ public class MainPage extends BasePage<MainPage> {
 
     @Step("Перейти на страницу People")
     public PeoplePage goToPeoplePage() {
-        peopleLink.shouldBe(visible).click();
+        peopleLink.click();
         return new PeoplePage();
     }
 }

@@ -1,4 +1,4 @@
 package guru.qa.niffler.model;
 
-public record TestData (String password){
+public record TestData(String password) {
 }
