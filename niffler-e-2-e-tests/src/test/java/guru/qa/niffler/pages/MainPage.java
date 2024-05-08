@@ -1,6 +1,7 @@
 package guru.qa.niffler.pages;
 
 import com.codeborne.selenide.ElementsCollection;
+import com.codeborne.selenide.SelectorMode;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
@@ -22,6 +23,7 @@ public class MainPage extends BasePage<MainPage> {
             .as("Строки таблицы");
     private final SelenideElement peopleLink = $("[href='/people']")
             .as("Кнопка перехода на странице People");
+    private final SelenideElement f = $("[id=react-select-3-placeholder]");
 
     @Override
     public MainPage waitForPageLoaded() {

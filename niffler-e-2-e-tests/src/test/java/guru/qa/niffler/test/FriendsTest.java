@@ -1,7 +1,6 @@
 package guru.qa.niffler.test;
 
 import guru.qa.niffler.jupiter.annotation.User;
-import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.jupiter.extension.BrowserExtension;
 import guru.qa.niffler.jupiter.extension.UsersQueueExtension;
 import guru.qa.niffler.model.UserJson;
@@ -14,7 +13,6 @@ import static guru.qa.niffler.jupiter.annotation.User.Selector.FRIEND;
 import static guru.qa.niffler.jupiter.annotation.User.Selector.INVITE_RECEIVED;
 import static guru.qa.niffler.jupiter.annotation.User.Selector.INVITE_SENT;
 
-@WebTest
 @ExtendWith({UsersQueueExtension.class, BrowserExtension.class})
 public class FriendsTest {
 
