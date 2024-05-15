@@ -21,7 +21,7 @@ public class JdbcSpendExtension extends AbstractSpendExtension {
     private final SpendRepository spendRepository = new SpendRepositoryJdbc();
 
     @Override
-    protected <T> Object createSpend(GenerateSpend spend, CategoryJson category) {
+    protected Object createSpend(GenerateSpend spend, CategoryJson category) {
         SpendEntity spendEntity = new SpendEntity();
         spendEntity.setUsername(category.username());
         spendEntity.setCurrency(spend.currency());

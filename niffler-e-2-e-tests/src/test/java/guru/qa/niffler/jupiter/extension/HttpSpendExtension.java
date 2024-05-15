@@ -30,7 +30,7 @@ public class HttpSpendExtension extends AbstractSpendExtension{
             .build();
 
     @Override
-    protected <T> Object createSpend(GenerateSpend spend, CategoryJson category) {
+    protected Object createSpend(GenerateSpend spend, CategoryJson category) {
 
         SpendApi spendApi = retrofit.create(SpendApi.class);
 

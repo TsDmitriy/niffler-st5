@@ -47,7 +47,7 @@ public abstract class AbstractSpendExtension implements BeforeEachCallback, Afte
         return SpendJson.fromEntity(extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId(), SpendEntity.class));
     }
 
-    protected abstract <T> Object createSpend(GenerateSpend spend, CategoryJson category);
+    protected abstract Object createSpend(GenerateSpend spend, CategoryJson category);
 
     protected abstract void removeSpend(SpendEntity spend);
 }

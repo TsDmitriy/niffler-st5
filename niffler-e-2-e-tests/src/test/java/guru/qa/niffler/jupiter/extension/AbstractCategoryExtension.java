@@ -47,7 +47,7 @@ public abstract class AbstractCategoryExtension implements BeforeEachCallback, A
     }
 
 
-    protected abstract <T> Object createCategory(GenerateCategory category);
+    protected abstract Object createCategory(GenerateCategory category);
 
     protected abstract void removeCategory(CategoryEntity category);
 }

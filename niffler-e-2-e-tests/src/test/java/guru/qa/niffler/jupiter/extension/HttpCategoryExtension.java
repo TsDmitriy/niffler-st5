@@ -25,7 +25,7 @@ public class HttpCategoryExtension extends AbstractCategoryExtension {
             .build();
 
     @Override
-    protected <T> Object createCategory(GenerateCategory category) {
+    protected Object createCategory(GenerateCategory category) {
         SpendApi spendApi = retrofit.create(SpendApi.class);
 
 

@@ -18,7 +18,7 @@ public class JdbcUpdateCategoryTest {
     private final SpendRepositoryJdbc spendRepositoryJdbc = new SpendRepositoryJdbc();
 
     @GenerateCategory(
-            category = "Обучение1",
+            category = "Обучение122",
             username = "tsarev"
     )
     @Test

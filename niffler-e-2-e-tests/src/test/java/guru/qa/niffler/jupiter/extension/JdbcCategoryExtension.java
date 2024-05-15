@@ -10,7 +10,7 @@ public class JdbcCategoryExtension extends AbstractCategoryExtension{
      private final SpendRepository spendRepository = new SpendRepositoryJdbc();
 
     @Override
-    protected <T> Object createCategory(GenerateCategory category) {
+    protected Object createCategory(GenerateCategory category) {
         CategoryEntity categoryEntity = new CategoryEntity();
         categoryEntity.setCategory(category.category());
         categoryEntity.setUsername(category.username());
