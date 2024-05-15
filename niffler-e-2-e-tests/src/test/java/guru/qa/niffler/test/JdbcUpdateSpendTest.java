@@ -22,13 +22,11 @@ public class JdbcUpdateSpendTest {
             category = "Обучение22",
             username = "tsarev"
     )
-
     @GenerateSpend(
             description = "QA.GURU Advanced 5",
             amount = 65000.00,
             currency = CurrencyValues.RUB
     )
-
     @Test
     void testUpdateSpendTest(SpendJson spendJson, CategoryJson categoryJson) {
 

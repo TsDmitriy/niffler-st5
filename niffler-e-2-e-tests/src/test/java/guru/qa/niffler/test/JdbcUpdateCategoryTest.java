@@ -18,11 +18,9 @@ public class JdbcUpdateCategoryTest {
     private final SpendRepositoryJdbc spendRepositoryJdbc = new SpendRepositoryJdbc();
 
     @GenerateCategory(
-
             category = "Обучение1",
             username = "tsarev"
     )
-
     @Test
     void testUpdateCategory(CategoryJson categoryJson) {
         category = spendRepositoryJdbc.getCategory(categoryJson.id());

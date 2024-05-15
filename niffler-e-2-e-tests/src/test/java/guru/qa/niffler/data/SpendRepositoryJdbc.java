@@ -57,7 +57,6 @@ public class SpendRepositoryJdbc implements SpendRepository {
             statement.execute();
 
             CategoryEntity category = new CategoryEntity();
-            ;
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     category.setId(UUID.fromString(resultSet.getString("id")));

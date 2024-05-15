@@ -36,13 +36,11 @@ public class JdbcWebSpendingTest {
             category = "Обучение",
             username = username
     )
-
     @GenerateSpend(
             description = "QA.GURU Advanced 5",
             amount = 65000.00,
             currency = CurrencyValues.RUB
     )
-
     @Test
     void testFindSpendAfterCreateCategoryAndSpendFromDataBase(SpendJson spendJson) {
        mainPage

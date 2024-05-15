@@ -33,18 +33,15 @@ public class HttpWebSpendingTest {
                 .openLoginPage()
                 .doLogin(username, password);
     }
-
     @GenerateCategory(
             category = "Обучение2",
             username = username
     )
-
     @GenerateSpend(
             description = "QA.GURU Advanced 5",
             amount = 65000.00,
             currency = CurrencyValues.RUB
     )
-
     @Test
     void spendingShouldBeDeletedAfterTableAction(SpendJson spendJson) {
         final int expectedSize = 0;
