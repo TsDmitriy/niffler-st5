@@ -1,27 +1,21 @@
 package guru.qa.niffler.test;
 
 import com.codeborne.selenide.Configuration;
-import com.codeborne.selenide.Selenide;
-import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.jupiter.annotation.GenerateCategory;
 import guru.qa.niffler.jupiter.annotation.GenerateSpend;
-import guru.qa.niffler.jupiter.annotation.meta.WebTest;
-import guru.qa.niffler.jupiter.extension.BrowserExtension;
-import guru.qa.niffler.jupiter.extension.CategoryExtension;
-import guru.qa.niffler.jupiter.extension.SpendExtension;
+import guru.qa.niffler.jupiter.annotation.meta.JdbcTest;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.pages.MainPage;
 import guru.qa.niffler.pages.WelcomePage;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.open;
 
-@WebTest
-public class SpendingTest {
+@JdbcTest
+public class JdbcWebSpendingTest {
 
     private MainPage mainPage;
     private final String username = "dotsarev";
@@ -38,27 +32,19 @@ public class SpendingTest {
                 .doLogin(username, password);
     }
 
-
     @GenerateCategory(
             category = "Обучение",
             username = username
     )
-
     @GenerateSpend(
             description = "QA.GURU Advanced 5",
             amount = 65000.00,
             currency = CurrencyValues.RUB
     )
-
     @Test
-    void spendingShouldBeDeletedAfterTableAction(SpendJson spendJson) {
-        final int expectedSize = 0;
-
-        SelenideElement rowWithSpending = mainPage
-                .findRowWithSpendingByDescription(spendJson.description());
-
-        mainPage.chooseSpending(rowWithSpending)
-                .deleteSpending()
-                .checkCountOfSpendings(expectedSize);
+    void testFindSpendAfterCreateCategoryAndSpendFromDataBase(SpendJson spendJson) {
+       mainPage
+               .findRowWithSpendingByDescription(spendJson.description())
+               .shouldBe(visible);
     }
 }
