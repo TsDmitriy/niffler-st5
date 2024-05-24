@@ -1,5 +1,6 @@
 package guru.qa.niffler.data.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
