@@ -22,6 +22,16 @@ public class SpendRepositorySpringJdbc implements SpendRepository {
     private final static JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSourceProvider.dataSource(DataBase.SPEND));
 
     @Override
+    public CategoryEntity findCategory(String category) {
+        return null;
+    }
+
+    @Override
+    public CategoryEntity getCategory(UUID id) {
+        return null;
+    }
+
+    @Override
     public CategoryEntity createCategory(CategoryEntity category) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 

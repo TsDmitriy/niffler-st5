@@ -1,9 +1,8 @@
 package guru.qa.niffler.data.repository;
 
 import guru.qa.niffler.data.DataBase;
-import guru.qa.niffler.data.entity.userAuth.Authority;
-import guru.qa.niffler.data.entity.userAuth.UserAuthEntity;
-import guru.qa.niffler.data.entity.userData.UserDataEntity;
+import guru.qa.niffler.data.entity.UserAuthEntity;
+import guru.qa.niffler.data.entity.UserEntity;
 import guru.qa.niffler.data.jdbc.DataSourceProvider;
 import guru.qa.niffler.data.sjdbc.UserDataEntityRowMapper;
 import org.springframework.dao.DataRetrievalFailureException;
@@ -18,7 +17,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,6 +33,12 @@ public class UserRepositorySpringJdbc implements UserRepository {
     private final static JdbcTemplate authJdbcTemplate = new JdbcTemplate(DataSourceProvider.dataSource(DataBase.AUTH));
     private final static JdbcTemplate userDataJdbcTemplate = new JdbcTemplate(DataSourceProvider.dataSource(DataBase.USERDATA));
     private final static PasswordEncoder PASSWORD_ENCODER = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+
+
+    @Override
+    public UserAuthEntity findUserInAuth(String userName) {
+        return null;
+    }
 
     @Override
     public UserAuthEntity createUserInAuth(UserAuthEntity user) {
@@ -75,7 +79,12 @@ public class UserRepositorySpringJdbc implements UserRepository {
     }
 
     @Override
-    public UserDataEntity createUserInUserData(UserDataEntity user) {
+    public UserEntity findUserInUserData(String userName) {
+        return null;
+    }
+
+    @Override
+    public UserEntity createUserInUserData(UserEntity user) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         return authTemplate.execute(status -> {
@@ -141,7 +150,7 @@ public class UserRepositorySpringJdbc implements UserRepository {
     }
 
     @Override
-    public UserDataEntity updateUserInUserdata(UserDataEntity user) {
+    public UserEntity updateUserInUserdata(UserEntity user) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         return authTemplate.execute(status -> {
@@ -168,7 +177,7 @@ public class UserRepositorySpringJdbc implements UserRepository {
     }
 
     @Override
-    public Optional<UserDataEntity> findUserInUserDataById(UUID uuid) {
+    public Optional<UserEntity> findUserInUserDataById(UUID uuid) {
         try {
             return Optional.of(userDataJdbcTemplate.queryForObject("select * from \"user\" where id=?", new UserDataEntityRowMapper(), uuid));
         } catch (DataRetrievalFailureException e) {

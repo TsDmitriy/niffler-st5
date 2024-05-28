@@ -1,9 +1,8 @@
 package guru.qa.niffler.data.repository;
 
-import guru.qa.niffler.data.entity.userAuth.UserAuthEntity;
-import guru.qa.niffler.data.entity.userData.UserDataEntity;
+import guru.qa.niffler.data.entity.UserAuthEntity;
+import guru.qa.niffler.data.entity.UserEntity;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -13,18 +12,22 @@ public interface UserRepository {
         if("sjdbc".equals(repo)){
             return new UserRepositorySpringJdbc();
         }
-        if("sjdbc".equals(repo)){
-            return new UserRepositoryHibernate();
+        if("sjdbc".equals(System.getProperty("repo"))){
+            return new UserRepositoryJdbc();
         }
-        return new UserRepositoryJdbc();
+        return new UserRepositoryHibernate();
     }
+    UserAuthEntity findUserInAuth(String userName);
 
     UserAuthEntity createUserInAuth(UserAuthEntity user);
-    UserDataEntity createUserInUserData(UserDataEntity user);
+
+    UserEntity createUserInUserData(UserEntity user);
 
     UserAuthEntity updateUserInAuth (UserAuthEntity user);
 
-    UserDataEntity updateUserInUserdata (UserDataEntity user);
+    UserEntity updateUserInUserdata (UserEntity user);
 
-    Optional<UserDataEntity> findUserInUserDataById(UUID uuid);
+    UserEntity findUserInUserData(String userName);
+
+    Optional<UserEntity> findUserInUserDataById(UUID uuid);
 }
