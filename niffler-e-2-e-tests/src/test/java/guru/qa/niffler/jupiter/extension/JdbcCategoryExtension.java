@@ -1,10 +1,9 @@
 package guru.qa.niffler.jupiter.extension;
 
-import guru.qa.niffler.data.SpendRepositoryJdbc;
+import guru.qa.niffler.data.repository.SpendRepositoryJdbc;
 import guru.qa.niffler.data.entity.CategoryEntity;
 import guru.qa.niffler.data.repository.SpendRepository;
 import guru.qa.niffler.jupiter.annotation.GenerateCategory;
-import guru.qa.niffler.model.CategoryJson;
 
 public class JdbcCategoryExtension extends AbstractCategoryExtension{
      private final SpendRepository spendRepository = new SpendRepositoryJdbc();
