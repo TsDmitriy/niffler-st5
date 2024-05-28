@@ -37,7 +37,7 @@ public class UserRepositorySpringJdbc implements UserRepository {
     private final static PasswordEncoder PASSWORD_ENCODER = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
     @Override
-    public Object createUserInAuth(UserAuthEntity user) {
+    public UserAuthEntity createUserInAuth(UserAuthEntity user) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         return authTemplate.execute(status -> {
@@ -61,12 +61,12 @@ public class UserRepositorySpringJdbc implements UserRepository {
                 @Override
                 public void setValues(PreparedStatement ps, int i) throws SQLException {
                     ps.setObject(1, user.getId());
-                    ps.setString(2, Authority.values()[i].name());
+                    ps.setString(2, user.getAuthorities().get(i).getAuthority().name());
                 }
 
                 @Override
                 public int getBatchSize() {
-                    return Authority.values().length;
+                    return user.getAuthorities().size();
                 }
             });
 
@@ -75,7 +75,7 @@ public class UserRepositorySpringJdbc implements UserRepository {
     }
 
     @Override
-    public Object createUserInUserData(UserDataEntity user) {
+    public UserDataEntity createUserInUserData(UserDataEntity user) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         return authTemplate.execute(status -> {
@@ -99,7 +99,7 @@ public class UserRepositorySpringJdbc implements UserRepository {
 
 
     @Override
-    public Object updateUserInAuth(UserAuthEntity user, List<String> authorityListForSet) {
+    public UserAuthEntity updateUserInAuth(UserAuthEntity user) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         return authTemplate.execute(status -> {
@@ -123,30 +123,25 @@ public class UserRepositorySpringJdbc implements UserRepository {
             );
             user.setId((UUID) keyHolder.getKeys().get("id"));
 
-            if (!authorityListForSet.isEmpty()) {
-                authJdbcTemplate.update("DELETE FROM authority where user_id = ?", user.getId());
 
-                authJdbcTemplate.batchUpdate("INSERT INTO authority (user_id, authority) VAlUES (?, ?)", new BatchPreparedStatementSetter() {
-                    @Override
-                    public void setValues(PreparedStatement ps, int i) throws SQLException {
-                        ps.setObject(1, user.getId());
-                        ps.setString(2, authorityListForSet.get(i));
-                    }
+            authJdbcTemplate.batchUpdate("INSERT INTO authority (user_id, authority) VAlUES (?, ?)", new BatchPreparedStatementSetter() {
+                @Override
+                public void setValues(PreparedStatement ps, int i) throws SQLException {
+                    ps.setObject(1, user.getId());
+                    ps.setString(2, user.getAuthorities().get(i).getAuthority().name());
+                }
 
-                    @Override
-                    public int getBatchSize() {
-                        return authorityListForSet.size();
-                    }
-                });
-            } else {
-                authJdbcTemplate.update("DELETE FROM authority where user_id = ?", user.getId());
-            }
+                @Override
+                public int getBatchSize() {
+                    return user.getAuthorities().size();
+                }
+            });
             return user;
         });
     }
 
     @Override
-    public Object updateUserInUserdata(UserDataEntity user) {
+    public UserDataEntity updateUserInUserdata(UserDataEntity user) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         return authTemplate.execute(status -> {

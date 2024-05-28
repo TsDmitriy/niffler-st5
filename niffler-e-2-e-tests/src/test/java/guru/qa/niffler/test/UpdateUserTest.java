@@ -38,30 +38,28 @@ public class UpdateUserTest {
         userAuth.setAccountNonLocked(true);
         userAuth.setCredentialsNonExpired(true);
 
-        List<String> authorityListForSet = Arrays.asList("read", "write");;
-        userRepository.updateUserInAuth(userAuth, authorityListForSet);
+        userRepository.updateUserInAuth(userAuth);
     }
 
     @Test
     void updateUserInAuth () {
         UserAuthEntity userAuth = new UserAuthEntity();
         userAuth.setId(UUID.fromString("f71cc872-169a-11ef-a275-0242ac110002"));
-        userAuth.setUsername("jdbc_user2_update" + new Faker().number().digits(3));
+        userAuth.setUsername("jdbc_user2_update1" + new Faker().number().digits(3));
         userAuth.setPassword("12345");
         userAuth.setEnabled(true);
         userAuth.setAccountNonExpired(true);
         userAuth.setAccountNonLocked(true);
         userAuth.setCredentialsNonExpired(true);
 
-        List<String> authorityListForSet = Arrays.asList("read", "write");;
-        userRepository.updateUserInAuth(userAuth, authorityListForSet);
+        userRepository.updateUserInAuth(userAuth);
     }
 
     @Test
     void updateUserInData () throws SQLException {
         UserDataEntity userAuth = new UserDataEntity();
         userAuth.setId(UUID.fromString("1fb1566e-1690-11ef-a335-0242ac110002"));
-        userAuth.setUsername("jdbc_user2_туц");
+        userAuth.setUsername("jdbc_user2_туц111");
         userAuth.setCurrency(CurrencyValues.RUB);
 
         Optional<UserDataEntity> userDataEntity = userRepository.findUserInUserDataById(UUID.fromString("1fb1566e-1690-11ef-a335-0242ac110002"));

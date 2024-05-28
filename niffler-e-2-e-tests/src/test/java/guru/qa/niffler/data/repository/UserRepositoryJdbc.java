@@ -1,11 +1,13 @@
 package guru.qa.niffler.data.repository;
 
 import guru.qa.niffler.data.DataBase;
+import guru.qa.niffler.data.entity.userAuth.AuthEntity;
 import guru.qa.niffler.data.entity.userAuth.Authority;
 import guru.qa.niffler.data.entity.userAuth.UserAuthEntity;
 import guru.qa.niffler.data.entity.userData.CurrencyValues;
 import guru.qa.niffler.data.entity.userData.UserDataEntity;
 import guru.qa.niffler.data.jdbc.DataSourceProvider;
+import guru.qa.niffler.data.sjdbc.AuthorityEntity;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -54,9 +56,9 @@ public class UserRepositoryJdbc implements UserRepository {
                 }
                 user.setId(generatedUserId);
 
-                for (Authority authority : Authority.values()) {
+                for (AuthEntity authority : user.getAuthorities()) {
                     authPs.setObject(1, generatedUserId);
-                    authPs.setString(2, authority.name());
+                    authPs.setString(2, authority.getAuthority().name());
                     authPs.addBatch();
                     authPs.clearParameters();
                 }
@@ -75,7 +77,7 @@ public class UserRepositoryJdbc implements UserRepository {
     }
 
     @Override
-    public Object createUserInUserData(UserDataEntity user) {
+    public UserDataEntity createUserInUserData(UserDataEntity user) {
         try (Connection connection = udDataSource.getConnection();
              PreparedStatement userPs = connection
                      .prepareStatement("INSERT INTO \"user\" (username, currency, firstname, surname, photo, photo_small) " +
@@ -107,7 +109,7 @@ public class UserRepositoryJdbc implements UserRepository {
     }
 
     @Override
-    public Object updateUserInAuth(UserAuthEntity user, List<String> authorityListForSet) {
+    public UserAuthEntity updateUserInAuth(UserAuthEntity user) {
         try (Connection connection = authDataSource.getConnection()) {
             connection.setAutoCommit(false);
             try (PreparedStatement userPs = connection
@@ -139,29 +141,14 @@ public class UserRepositoryJdbc implements UserRepository {
                 }
                 user.setId(generatedUserId);
 
-
-                if (!authorityListForSet.isEmpty()) {
-                    PreparedStatement preparedStatement = connection
-                            .prepareStatement("DELETE FROM authority where user_id = ?"
-                            );
-                    preparedStatement.setObject(1, user.getId());
-                    preparedStatement.executeUpdate();
-
-                    for (Authority authority : Authority.values()) {
-                        authPs.setObject(1, generatedUserId);
-                        authPs.setString(2, authority.name());
-                        authPs.addBatch();
-                        authPs.clearParameters();
-                    }
-                    authPs.executeBatch();
-                    connection.commit();
-                } else {
-                    PreparedStatement preparedStatement = connection
-                            .prepareStatement("DELETE FROM authority where user_id = ?"
-                            );
-                    preparedStatement.setObject(1, user.getId());
-                    preparedStatement.executeUpdate();
+                for (AuthEntity authority : user.getAuthorities()) {
+                    authPs.setObject(1, generatedUserId);
+                    authPs.setString(2, authority.getAuthority().name());
+                    authPs.addBatch();
+                    authPs.clearParameters();
                 }
+                authPs.executeBatch();
+                connection.commit();
                 return user;
             } catch (SQLException e) {
                 connection.rollback();
@@ -169,13 +156,14 @@ public class UserRepositoryJdbc implements UserRepository {
             } finally {
                 connection.setAutoCommit(true);
             }
-        } catch (SQLException e) {
+        } catch (
+                SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public Object updateUserInUserdata(UserDataEntity user) {
+    public UserDataEntity updateUserInUserdata(UserDataEntity user) {
         try (Connection connection = udDataSource.getConnection();
              PreparedStatement prepareStatement = connection
                      .prepareStatement("UPDATE \"user\" " +

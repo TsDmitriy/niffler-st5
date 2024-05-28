@@ -1,32 +1,30 @@
 package guru.qa.niffler.data.repository;
 
-import guru.qa.niffler.data.entity.userAuth.Authority;
 import guru.qa.niffler.data.entity.userAuth.UserAuthEntity;
 import guru.qa.niffler.data.entity.userData.UserDataEntity;
-import guru.qa.niffler.data.sjdbc.AuthorityEntity;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface UserRepository {
     static UserRepository getInstance(){
-        if("sjdbc".equals(System.getProperty("repo"))){
+        final String repo = System.getProperty("repo");
+        if("sjdbc".equals(repo)){
             return new UserRepositorySpringJdbc();
         }
-        if("sjdbc".equals(System.getProperty("repo"))){
-            return new UserRepositoryHybernate();
+        if("sjdbc".equals(repo)){
+            return new UserRepositoryHibernate();
         }
         return new UserRepositoryJdbc();
     }
 
-    Object createUserInAuth(UserAuthEntity user);
-    Object createUserInUserData(UserDataEntity user);
+    UserAuthEntity createUserInAuth(UserAuthEntity user);
+    UserDataEntity createUserInUserData(UserDataEntity user);
 
-    Object updateUserInAuth (UserAuthEntity user, List<String> authorityListForSet);
+    UserAuthEntity updateUserInAuth (UserAuthEntity user);
 
-    Object updateUserInUserdata (UserDataEntity user);
+    UserDataEntity updateUserInUserdata (UserDataEntity user);
 
     Optional<UserDataEntity> findUserInUserDataById(UUID uuid);
 }

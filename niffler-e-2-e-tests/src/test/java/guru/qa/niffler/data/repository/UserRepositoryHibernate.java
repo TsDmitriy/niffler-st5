@@ -1,32 +1,30 @@
 package guru.qa.niffler.data.repository;
 
-import guru.qa.niffler.data.entity.userAuth.Authority;
 import guru.qa.niffler.data.entity.userAuth.UserAuthEntity;
 import guru.qa.niffler.data.entity.userData.UserDataEntity;
-import guru.qa.niffler.data.sjdbc.AuthorityEntity;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class UserRepositoryHybernate implements UserRepository{
+public class UserRepositoryHibernate implements UserRepository{
     @Override
-    public Object createUserInAuth(UserAuthEntity user) {
+    public UserAuthEntity createUserInAuth(UserAuthEntity user) {
         return null;
     }
 
     @Override
-    public Object createUserInUserData(UserDataEntity user) {
+    public UserDataEntity createUserInUserData(UserDataEntity user) {
         return null;
     }
 
     @Override
-    public Object updateUserInAuth(UserAuthEntity user,  List<String> authorityListForSet) {
+    public UserAuthEntity updateUserInAuth(UserAuthEntity user) {
         return null;
     }
 
     @Override
-    public Object updateUserInUserdata(UserDataEntity user) {
+    public UserDataEntity updateUserInUserdata(UserDataEntity user) {
         return null;
     }
 
