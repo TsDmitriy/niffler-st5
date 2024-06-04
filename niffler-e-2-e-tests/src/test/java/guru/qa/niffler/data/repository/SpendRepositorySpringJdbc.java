@@ -4,6 +4,7 @@ import guru.qa.niffler.data.DataBase;
 import guru.qa.niffler.data.entity.CategoryEntity;
 import guru.qa.niffler.data.entity.SpendEntity;
 import guru.qa.niffler.data.jdbc.DataSourceProvider;
+import guru.qa.niffler.data.sjdbc.CatogoryEntityRowMapper;
 import guru.qa.niffler.data.sjdbc.SpendEntityRowMapper;
 import guru.qa.niffler.model.CurrencyValues;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -22,13 +23,15 @@ public class SpendRepositorySpringJdbc implements SpendRepository {
     private final static JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSourceProvider.dataSource(DataBase.SPEND));
 
     @Override
-    public CategoryEntity findCategory(String category) {
-        return null;
+    public CategoryEntity findCategory(String category, String username) {
+        return jdbcTemplate.queryForObject("SELECT * FROM category where category = ? and  username = ?",
+                new CatogoryEntityRowMapper(), category, username);
     }
 
     @Override
     public CategoryEntity getCategory(UUID id) {
-        return null;
+        return jdbcTemplate.queryForObject("SELECT * FROM category where id = ?",
+                new CatogoryEntityRowMapper(), id);
     }
 
     @Override

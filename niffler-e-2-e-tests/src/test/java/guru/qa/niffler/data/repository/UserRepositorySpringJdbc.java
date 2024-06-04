@@ -4,6 +4,7 @@ import guru.qa.niffler.data.DataBase;
 import guru.qa.niffler.data.entity.UserAuthEntity;
 import guru.qa.niffler.data.entity.UserEntity;
 import guru.qa.niffler.data.jdbc.DataSourceProvider;
+import guru.qa.niffler.data.sjdbc.UserAuthEntityRowMapper;
 import guru.qa.niffler.data.sjdbc.UserDataEntityRowMapper;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
@@ -36,8 +37,13 @@ public class UserRepositorySpringJdbc implements UserRepository {
 
 
     @Override
-    public UserAuthEntity findUserInAuth(String userName) {
-        return null;
+    public Optional<UserAuthEntity> findUserInAuth(String userName) {
+        try {
+            return Optional.of(authJdbcTemplate.queryForObject("SELECT * FROM \"user\" where username = ?;",
+                    new UserAuthEntityRowMapper(), userName));
+        } catch (DataRetrievalFailureException e) {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -79,8 +85,12 @@ public class UserRepositorySpringJdbc implements UserRepository {
     }
 
     @Override
-    public UserEntity findUserInUserData(String userName) {
-        return null;
+    public Optional<Object> findUserInUserData(String userName) {
+        try {
+            return Optional.of(userDataJdbcTemplate.queryForObject("select * from \"user\" where username= ?", new UserDataEntityRowMapper(), userName));
+        } catch (DataRetrievalFailureException e) {
+            return Optional.empty();
+        }
     }
 
     @Override

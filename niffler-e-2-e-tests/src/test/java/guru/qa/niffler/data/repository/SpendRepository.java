@@ -12,10 +12,10 @@ public interface SpendRepository {
         if ("sjdbc".equals(System.getProperty("repo"))) {
             return new SpendRepositoryJdbc();
         }
-        return new SpendRepositoryHybernate();
+        return new SpendRepositoryHibernate();
     }
 
-    CategoryEntity findCategory(String category);
+    CategoryEntity findCategory(String category, String username);
 
     CategoryEntity getCategory(UUID id);
 

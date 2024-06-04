@@ -1,7 +1,6 @@
 package guru.qa.niffler.data.repository;
 
 import guru.qa.niffler.data.DataBase;
-import guru.qa.niffler.data.entity.Authority;
 import guru.qa.niffler.data.entity.AuthorityEntity;
 import guru.qa.niffler.data.entity.UserAuthEntity;
 import guru.qa.niffler.data.entity.CurrencyValues;
@@ -15,7 +14,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,9 +23,36 @@ public class UserRepositoryJdbc implements UserRepository {
     private final static PasswordEncoder PASSWORD_ENCODER = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
     @Override
-    public UserAuthEntity findUserInAuth(String userName) {
-        return null;
+    public Optional<UserAuthEntity> findUserInAuth(String userName) {
+        UserAuthEntity userAuthEntity = new UserAuthEntity();
+
+        try (Connection connection = authDataSource.getConnection();
+             PreparedStatement prepareStatement = connection
+                     .prepareStatement("SELECT * FROM \"user\" where  username= ?",
+                             PreparedStatement.RETURN_GENERATED_KEYS
+                     );
+        ) {
+            prepareStatement.setObject(1, userName);
+            prepareStatement.execute();
+            try (ResultSet resultSet = prepareStatement.getResultSet();) {
+                if (resultSet.next()) {
+                    userAuthEntity.setId((UUID) resultSet.getObject("id"));
+                    userAuthEntity.setUsername(resultSet.getString("username"));
+                    userAuthEntity.setPassword(resultSet.getString("password"));
+                    userAuthEntity.setEnabled(resultSet.getBoolean("enabled"));
+                    userAuthEntity.setAccountNonExpired(resultSet.getBoolean("account_non_expired"));
+                    userAuthEntity.setAccountNonLocked(resultSet.getBoolean("account_non_locked"));
+                    userAuthEntity.setCredentialsNonExpired(resultSet.getBoolean("credentials_non_expired"));
+                } else {
+                    Optional.empty();
+                }
+            }
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+        return Optional.of(userAuthEntity);
     }
+
 
     @Override
     public UserAuthEntity createUserInAuth(UserAuthEntity user) {
@@ -78,11 +103,6 @@ public class UserRepositoryJdbc implements UserRepository {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public UserEntity findUserInUserData(String userName) {
-        return null;
     }
 
     @Override
@@ -217,6 +237,36 @@ public class UserRepositoryJdbc implements UserRepository {
                      );
         ) {
             prepareStatement.setObject(1, uuid);
+            prepareStatement.execute();
+            try (ResultSet resultSet = prepareStatement.getResultSet();) {
+                if (resultSet.next()) {
+                    userEntity.setId((UUID) resultSet.getObject("id"));
+                    userEntity.setUsername(resultSet.getString("username"));
+                    userEntity.setCurrency(CurrencyValues.valueOf(resultSet.getString("currency")));
+                    userEntity.setFirstname(resultSet.getString("firstname"));
+                    userEntity.setSurname(resultSet.getString("surname"));
+                    userEntity.setPhoto(resultSet.getBytes("photo"));
+                } else {
+                    Optional.empty();
+                }
+            }
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+        return Optional.of(userEntity);
+    }
+
+    @Override
+    public Optional<Object> findUserInUserData(String userName) {
+        UserEntity userEntity = new UserEntity();
+
+        try (Connection connection = udDataSource.getConnection();
+             PreparedStatement prepareStatement = connection
+                     .prepareStatement("SELECT * FROM \"user\" where  username= ?",
+                             PreparedStatement.RETURN_GENERATED_KEYS
+                     );
+        ) {
+            prepareStatement.setObject(1, userName);
             prepareStatement.execute();
             try (ResultSet resultSet = prepareStatement.getResultSet();) {
                 if (resultSet.next()) {

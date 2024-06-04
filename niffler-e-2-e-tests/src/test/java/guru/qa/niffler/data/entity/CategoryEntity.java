@@ -14,6 +14,7 @@ import org.hibernate.proxy.HibernateProxy;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
+
 @Getter
 @Setter
 @Entity

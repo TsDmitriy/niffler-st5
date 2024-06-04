@@ -10,22 +10,22 @@ import org.hibernate.query.Query;
 import java.util.List;
 import java.util.UUID;
 
-public class SpendRepositoryHybernate implements SpendRepository {
+public class SpendRepositoryHibernate implements SpendRepository {
     private final EntityManager em = EmProvider.dataSource(DataBase.SPEND);
 
     @Override
-    public CategoryEntity findCategory(String category) {
-        String hql = "FROM CategoryEntity WHERE category = :category";
-
-        Query query = (Query) em.createQuery(hql, CategoryEntity.class);
-        query.setParameter("category", category);
-
-        return (CategoryEntity) query.getSingleResult();
+    public CategoryEntity findCategory(String category, String username) {
+        return em.createQuery("FROM CategoryEntity WHERE category = :category and username = :username", CategoryEntity.class)
+                .setParameter("category", category)
+                .setParameter("username", username)
+                .getSingleResult();
     }
 
     @Override
     public CategoryEntity getCategory(UUID id) {
-        return null;
+        return em.createQuery("FROM CategoryEntity WHERE id = :id", CategoryEntity.class)
+                .setParameter("id", id)
+                .getSingleResult();
     }
 
     @Override

@@ -48,7 +48,7 @@ public class SpendRepositoryJdbc implements SpendRepository {
     }
 
     @Override
-    public CategoryEntity findCategory(String category) {
+    public CategoryEntity findCategory(String category, String username) {
         return null;
     }
 
