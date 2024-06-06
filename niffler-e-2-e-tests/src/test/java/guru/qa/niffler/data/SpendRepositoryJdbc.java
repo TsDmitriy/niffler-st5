@@ -47,6 +47,11 @@ public class SpendRepositoryJdbc implements SpendRepository {
         }
     }
 
+    @Override
+    public CategoryEntity findCategory(String category, String username) {
+        return null;
+    }
+
     @Step("Получить категорию с id {0}")
     public CategoryEntity getCategory(UUID id) {
         try (Connection connection = spendDataSource.getConnection();
@@ -176,7 +181,7 @@ public class SpendRepositoryJdbc implements SpendRepository {
                     spend.setCurrency(CurrencyValues.valueOf(resultSet.getString("currency")));
                     spend.setAmount(resultSet.getDouble("amount"));
                     spend.setDescription(resultSet.getString("description"));
-                    spend.setCategory((UUID) resultSet.getObject("category_id"));
+                    spend.setCategory((CategoryEntity) resultSet.getObject("category_id"));
                 } else {
                     throw new IllegalArgumentException("Неудалось получить данные о трате");
                 }

@@ -1,6 +1,6 @@
 package guru.qa.niffler.test;
 
-import guru.qa.niffler.data.repository.SpendRepositoryJdbc;
+import guru.qa.niffler.data.SpendRepositoryJdbc;
 import guru.qa.niffler.data.entity.CategoryEntity;
 import guru.qa.niffler.data.entity.SpendEntity;
 import guru.qa.niffler.jupiter.annotation.GenerateCategory;

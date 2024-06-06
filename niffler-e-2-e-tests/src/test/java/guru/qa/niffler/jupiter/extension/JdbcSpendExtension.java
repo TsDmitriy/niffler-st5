@@ -1,5 +1,6 @@
 package guru.qa.niffler.jupiter.extension;
 
+import guru.qa.niffler.data.entity.CategoryEntity;
 import guru.qa.niffler.data.repository.SpendRepositoryJdbc;
 import guru.qa.niffler.data.entity.SpendEntity;
 import guru.qa.niffler.data.repository.SpendRepository;
@@ -9,7 +10,7 @@ import guru.qa.niffler.model.CategoryJson;
 import java.sql.Date;
 
 public class JdbcSpendExtension extends AbstractSpendExtension {
-    private final SpendRepository spendRepository = new SpendRepositoryJdbc();
+    private final SpendRepository spendRepository = SpendRepository.getInstance();
 
     @Override
     protected Object createSpend(GenerateSpend spend, CategoryJson category) {
@@ -19,7 +20,7 @@ public class JdbcSpendExtension extends AbstractSpendExtension {
         spendEntity.setSpendDate(new Date(System.currentTimeMillis()));
         spendEntity.setAmount(spend.amount());
         spendEntity.setDescription(spend.description());
-        spendEntity.setCategory(category.id());
+        spendEntity.setCategory(CategoryEntity.fromJson(category));
 
         return spendRepository.createSpend(spendEntity);
     }

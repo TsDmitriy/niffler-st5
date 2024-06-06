@@ -4,19 +4,32 @@ import guru.qa.niffler.data.entity.CategoryEntity;
 import guru.qa.niffler.data.entity.SpendEntity;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface SpendRepository {
-        CategoryEntity createCategory(CategoryEntity category);
 
-        CategoryEntity editCategory(CategoryEntity category);
+    static SpendRepository getInstance() {
+        if ("sjdbc".equals(System.getProperty("repo"))) {
+            return new SpendRepositoryJdbc();
+        }
+        return new SpendRepositoryHibernate();
+    }
 
-        void removeCategory(CategoryEntity category);
+    CategoryEntity findCategory(String category, String username);
 
-        SpendEntity createSpend(SpendEntity spend);
+    CategoryEntity getCategory(UUID id);
 
-        SpendEntity editSpend(SpendEntity spend);
+    CategoryEntity createCategory(CategoryEntity category);
 
-        void removeSpend(SpendEntity spend);
+    CategoryEntity editCategory(CategoryEntity category);
 
-        List<SpendEntity> findAllByUsername(String username);
+    void removeCategory(CategoryEntity category);
+
+    SpendEntity createSpend(SpendEntity spend);
+
+    SpendEntity editSpend(SpendEntity spend);
+
+    void removeSpend(SpendEntity spend);
+
+    List<SpendEntity> findAllByUsername(String username);
 }
