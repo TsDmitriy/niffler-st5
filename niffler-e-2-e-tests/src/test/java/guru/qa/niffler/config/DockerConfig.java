@@ -20,7 +20,7 @@ public class DockerConfig implements Config{
 
     @Override
     public String currencyUrl() {
-        return null;
+        return "http:/urrency.niffler.dc:8090/";
     }
 
     @Override
