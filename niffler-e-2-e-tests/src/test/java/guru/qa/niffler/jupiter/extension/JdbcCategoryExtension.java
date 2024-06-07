@@ -6,7 +6,7 @@ import guru.qa.niffler.data.repository.SpendRepository;
 import guru.qa.niffler.jupiter.annotation.GenerateCategory;
 
 public class JdbcCategoryExtension extends AbstractCategoryExtension{
-     private final SpendRepository spendRepository = new SpendRepositoryJdbc();
+     private final SpendRepository spendRepository = SpendRepository.getInstance();
 
     @Override
     protected Object createCategory(GenerateCategory category) {

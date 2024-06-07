@@ -49,6 +49,33 @@ public class SpendRepositoryJdbc implements SpendRepository {
         }
     }
 
+    @Override
+    public CategoryEntity findCategory(String categoryName, String userName) {
+        try (Connection connection = spendDataSource.getConnection();
+             PreparedStatement statement = connection
+                     .prepareStatement("SELECT * FROM category where category = ? and userName = ?;",
+                             PreparedStatement.RETURN_GENERATED_KEYS
+                     )) {
+            statement.setString(1, categoryName);
+            statement.setString(2, userName);
+            statement.execute();
+
+            CategoryEntity category = new CategoryEntity();
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    category.setId(UUID.fromString(resultSet.getString("id")));
+                    category.setUsername(resultSet.getString("userName"));
+                    category.setCategory(resultSet.getString("category"));
+                } else {
+                    throw new IllegalArgumentException("Не удалось получить данные по категории");
+                }
+            }
+            return category;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Step("Получить категорию с id {0}")
     public CategoryEntity getCategory(UUID id) {
         try (Connection connection = spendDataSource.getConnection();
@@ -178,7 +205,7 @@ public class SpendRepositoryJdbc implements SpendRepository {
                     spend.setCurrency(CurrencyValues.valueOf(resultSet.getString("currency")));
                     spend.setAmount(resultSet.getDouble("amount"));
                     spend.setDescription(resultSet.getString("description"));
-                    spend.setCategory((UUID) resultSet.getObject("category_id"));
+                    spend.setCategory((CategoryEntity) resultSet.getObject("category_id"));
                 } else {
                     throw new IllegalArgumentException("Неудалось получить данные о трате");
                 }
@@ -220,7 +247,7 @@ public class SpendRepositoryJdbc implements SpendRepository {
                 spend.setCurrency(CurrencyValues.valueOf(resultSet.getString("currency")));
                 spend.setAmount(resultSet.getDouble("amount"));
                 spend.setDescription(resultSet.getString("description"));
-                spend.setCategory(UUID.fromString(resultSet.getString("category_id")));
+                spend.setCategory((CategoryEntity) resultSet.getObject("category_id"));
                 spends.add(spend);
             }
         } catch (SQLException e) {

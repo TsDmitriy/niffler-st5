@@ -1,4 +1,4 @@
-package guru.qa.niffler.data.entity.userAuth;
+package guru.qa.niffler.data.entity;
 
 import lombok.Getter;
 

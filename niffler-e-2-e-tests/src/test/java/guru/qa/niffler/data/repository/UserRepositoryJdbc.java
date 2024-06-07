@@ -1,13 +1,11 @@
 package guru.qa.niffler.data.repository;
 
 import guru.qa.niffler.data.DataBase;
-import guru.qa.niffler.data.entity.userAuth.AuthEntity;
-import guru.qa.niffler.data.entity.userAuth.Authority;
-import guru.qa.niffler.data.entity.userAuth.UserAuthEntity;
-import guru.qa.niffler.data.entity.userData.CurrencyValues;
-import guru.qa.niffler.data.entity.userData.UserDataEntity;
+import guru.qa.niffler.data.entity.AuthorityEntity;
+import guru.qa.niffler.data.entity.UserAuthEntity;
+import guru.qa.niffler.data.entity.CurrencyValues;
+import guru.qa.niffler.data.entity.UserEntity;
 import guru.qa.niffler.data.jdbc.DataSourceProvider;
-import guru.qa.niffler.data.sjdbc.AuthorityEntity;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -16,7 +14,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,6 +21,38 @@ public class UserRepositoryJdbc implements UserRepository {
     private final static DataSource authDataSource = DataSourceProvider.dataSource(DataBase.AUTH);
     private final static DataSource udDataSource = DataSourceProvider.dataSource(DataBase.USERDATA);
     private final static PasswordEncoder PASSWORD_ENCODER = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+
+    @Override
+    public Optional<UserAuthEntity> findUserInAuth(String userName) {
+        UserAuthEntity userAuthEntity = new UserAuthEntity();
+
+        try (Connection connection = authDataSource.getConnection();
+             PreparedStatement prepareStatement = connection
+                     .prepareStatement("SELECT * FROM \"user\" where  username= ?",
+                             PreparedStatement.RETURN_GENERATED_KEYS
+                     );
+        ) {
+            prepareStatement.setObject(1, userName);
+            prepareStatement.execute();
+            try (ResultSet resultSet = prepareStatement.getResultSet();) {
+                if (resultSet.next()) {
+                    userAuthEntity.setId((UUID) resultSet.getObject("id"));
+                    userAuthEntity.setUsername(resultSet.getString("username"));
+                    userAuthEntity.setPassword(resultSet.getString("password"));
+                    userAuthEntity.setEnabled(resultSet.getBoolean("enabled"));
+                    userAuthEntity.setAccountNonExpired(resultSet.getBoolean("account_non_expired"));
+                    userAuthEntity.setAccountNonLocked(resultSet.getBoolean("account_non_locked"));
+                    userAuthEntity.setCredentialsNonExpired(resultSet.getBoolean("credentials_non_expired"));
+                } else {
+                    Optional.empty();
+                }
+            }
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+        return Optional.of(userAuthEntity);
+    }
+
 
     @Override
     public UserAuthEntity createUserInAuth(UserAuthEntity user) {
@@ -56,7 +85,7 @@ public class UserRepositoryJdbc implements UserRepository {
                 }
                 user.setId(generatedUserId);
 
-                for (AuthEntity authority : user.getAuthorities()) {
+                for (AuthorityEntity authority : user.getAuthorities()) {
                     authPs.setObject(1, generatedUserId);
                     authPs.setString(2, authority.getAuthority().name());
                     authPs.addBatch();
@@ -77,7 +106,7 @@ public class UserRepositoryJdbc implements UserRepository {
     }
 
     @Override
-    public UserDataEntity createUserInUserData(UserDataEntity user) {
+    public UserEntity createUserInUserData(UserEntity user) {
         try (Connection connection = udDataSource.getConnection();
              PreparedStatement userPs = connection
                      .prepareStatement("INSERT INTO \"user\" (username, currency, firstname, surname, photo, photo_small) " +
@@ -141,7 +170,7 @@ public class UserRepositoryJdbc implements UserRepository {
                 }
                 user.setId(generatedUserId);
 
-                for (AuthEntity authority : user.getAuthorities()) {
+                for (AuthorityEntity authority : user.getAuthorities()) {
                     authPs.setObject(1, generatedUserId);
                     authPs.setString(2, authority.getAuthority().name());
                     authPs.addBatch();
@@ -163,7 +192,7 @@ public class UserRepositoryJdbc implements UserRepository {
     }
 
     @Override
-    public UserDataEntity updateUserInUserdata(UserDataEntity user) {
+    public UserEntity updateUserInUserdata(UserEntity user) {
         try (Connection connection = udDataSource.getConnection();
              PreparedStatement prepareStatement = connection
                      .prepareStatement("UPDATE \"user\" " +
@@ -198,8 +227,8 @@ public class UserRepositoryJdbc implements UserRepository {
     }
 
     @Override
-    public Optional<UserDataEntity> findUserInUserDataById(UUID uuid) {
-        UserDataEntity userDataEntity = new UserDataEntity();
+    public Optional<UserEntity> findUserInUserDataById(UUID uuid) {
+        UserEntity userEntity = new UserEntity();
 
         try (Connection connection = udDataSource.getConnection();
              PreparedStatement prepareStatement = connection
@@ -211,12 +240,12 @@ public class UserRepositoryJdbc implements UserRepository {
             prepareStatement.execute();
             try (ResultSet resultSet = prepareStatement.getResultSet();) {
                 if (resultSet.next()) {
-                    userDataEntity.setId((UUID) resultSet.getObject("id"));
-                    userDataEntity.setUsername(resultSet.getString("username"));
-                    userDataEntity.setCurrency(CurrencyValues.valueOf(resultSet.getString("currency")));
-                    userDataEntity.setFirstname(resultSet.getString("firstname"));
-                    userDataEntity.setSurname(resultSet.getString("surname"));
-                    userDataEntity.setPhoto(resultSet.getBytes("photo"));
+                    userEntity.setId((UUID) resultSet.getObject("id"));
+                    userEntity.setUsername(resultSet.getString("username"));
+                    userEntity.setCurrency(CurrencyValues.valueOf(resultSet.getString("currency")));
+                    userEntity.setFirstname(resultSet.getString("firstname"));
+                    userEntity.setSurname(resultSet.getString("surname"));
+                    userEntity.setPhoto(resultSet.getBytes("photo"));
                 } else {
                     Optional.empty();
                 }
@@ -224,6 +253,36 @@ public class UserRepositoryJdbc implements UserRepository {
         } catch (SQLException ex) {
             throw new RuntimeException(ex);
         }
-        return Optional.of(userDataEntity);
+        return Optional.of(userEntity);
+    }
+
+    @Override
+    public Optional<Object> findUserInUserData(String userName) {
+        UserEntity userEntity = new UserEntity();
+
+        try (Connection connection = udDataSource.getConnection();
+             PreparedStatement prepareStatement = connection
+                     .prepareStatement("SELECT * FROM \"user\" where  username= ?",
+                             PreparedStatement.RETURN_GENERATED_KEYS
+                     );
+        ) {
+            prepareStatement.setObject(1, userName);
+            prepareStatement.execute();
+            try (ResultSet resultSet = prepareStatement.getResultSet();) {
+                if (resultSet.next()) {
+                    userEntity.setId((UUID) resultSet.getObject("id"));
+                    userEntity.setUsername(resultSet.getString("username"));
+                    userEntity.setCurrency(CurrencyValues.valueOf(resultSet.getString("currency")));
+                    userEntity.setFirstname(resultSet.getString("firstname"));
+                    userEntity.setSurname(resultSet.getString("surname"));
+                    userEntity.setPhoto(resultSet.getBytes("photo"));
+                } else {
+                    Optional.empty();
+                }
+            }
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+        return Optional.of(userEntity);
     }
 }

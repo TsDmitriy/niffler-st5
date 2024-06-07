@@ -1,5 +1,6 @@
 package guru.qa.niffler.data.sjdbc;
 
+import guru.qa.niffler.data.entity.CategoryEntity;
 import guru.qa.niffler.data.entity.SpendEntity;
 import guru.qa.niffler.model.CurrencyValues;
 import org.springframework.jdbc.core.RowMapper;
@@ -18,7 +19,7 @@ public class SpendEntityRowMapper implements RowMapper<SpendEntity> {
         spendEntity.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
         spendEntity.setAmount(rs.getDouble("amount"));
         spendEntity.setDescription(rs.getString("description"));
-        spendEntity.setCategory((UUID) rs.getObject("category_id"));
+        spendEntity.setCategory((CategoryEntity) rs.getObject("category_id"));
         return spendEntity;
     }
 }
