@@ -1,5 +1,7 @@
 package guru.qa.niffler.jupiter.extension;
 import guru.qa.niffler.api.SpendApi;
+import guru.qa.niffler.api.SpendApiClient;
+import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.entity.CategoryEntity;
 import guru.qa.niffler.data.entity.SpendEntity;
 import guru.qa.niffler.jupiter.annotation.GenerateSpend;
@@ -19,20 +21,11 @@ import java.io.IOException;
 import java.util.Date;
 
 public class HttpSpendExtension extends AbstractSpendExtension{
-
-    private static final OkHttpClient okHttpClient = new OkHttpClient.Builder()
-            .build();
-
-    private final Retrofit retrofit = new Retrofit.Builder()
-            .client(okHttpClient)
-            .baseUrl("http://127.0.0.1:8093/")
-            .addConverterFactory(JacksonConverterFactory.create())
-            .build();
+    private static final Config CFG = Config.getInstance();
+    private final SpendApiClient spendApiClient = new SpendApiClient();
 
     @Override
     protected Object createSpend(GenerateSpend spend, CategoryJson category) {
-
-        SpendApi spendApi = retrofit.create(SpendApi.class);
 
         SpendJson spendJson = new SpendJson(
                 null,
@@ -45,7 +38,7 @@ public class HttpSpendExtension extends AbstractSpendExtension{
         );
 
         try {
-            return SpendEntity.fromJson(spendApi.createSpend(spendJson).execute().body(), CategoryEntity.fromJson(category));
+            return SpendEntity.fromJson(spendApiClient.createSpend(spendJson), CategoryEntity.fromJson(category));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

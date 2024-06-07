@@ -9,12 +9,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import static com.codeborne.selenide.Selenide.open;
 @ExtendWith(DbCreateUserExtension.class)
-public class LoginTest {
+public class LoginTest extends BaseTest{
 
     @Test
     @TestUser
     void login (UserJson userJson) throws InterruptedException {
-        open("http://127.0.0.1:3000/main", WelcomePage.class)
+        open(CFG.frontUrl(), WelcomePage.class)
                 .openLoginPage()
                 .doLogin( userJson.username(), userJson.testData().password());
         System.out.println("Логин юзера " + userJson.username() + "Пароль " + userJson.testData().password());

@@ -16,12 +16,12 @@ import org.junit.jupiter.api.Test;
 
 
 import static com.codeborne.selenide.Selenide.open;
-@HttpWebTest
-public class HttpWebSpendingTest {
+
+public class HttpWebSpendingTest extends BaseTest{
 
     private MainPage mainPage;
-    private final String username = "dotsarev";
-    private final String password = "dotsarev";
+    private final String username = "DIMA";
+    private final String password = "DIMA";
 
     static {
         Configuration.browserSize = "1920x1080";
@@ -29,12 +29,12 @@ public class HttpWebSpendingTest {
 
     @BeforeEach
     void doLogin() {
-        mainPage = open("http://127.0.0.1:3000/main", WelcomePage.class)
+        mainPage = open(CFG.frontUrl(), WelcomePage.class)
                 .openLoginPage()
                 .doLogin(username, password);
     }
     @GenerateCategory(
-            category = "Обучение2",
+            category = "Обучение22311734",
             username = username
     )
     @GenerateSpend(
