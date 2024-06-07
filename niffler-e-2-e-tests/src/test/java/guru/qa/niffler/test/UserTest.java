@@ -45,7 +45,7 @@ public class UserTest {
 
     @Test
     void findCategoryAndUser() {
-        CategoryEntity categoryEntity =  spendRepository.findCategory("Обучение511", "DIMA");
+        CategoryEntity categoryEntity =  spendRepository.findCategory("category", "DIMA");
         Optional<UserAuthEntity> userAuthEntity =  userRepository.findUserInAuth("jdbc_user2_update12222");
         Optional<Object> user = userRepository.findUserInUserData("jdbc_user12211");
         System.out.println("");
