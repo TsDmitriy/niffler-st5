@@ -1,8 +1,8 @@
 package guru.qa.niffler.config;
 
 public class LocalConfig implements Config {
-    private static final String LOCAL_HOST_URL = "http://127.0.0.1";
 
+    private static final String LOCAL_HOST_URL = "http://127.0.0.1";
     static final LocalConfig instance = new LocalConfig();
 
     private LocalConfig() {
@@ -32,5 +32,4 @@ public class LocalConfig implements Config {
     public String dbUrl() {
         return "127.0.0.1";
     }
-
 }

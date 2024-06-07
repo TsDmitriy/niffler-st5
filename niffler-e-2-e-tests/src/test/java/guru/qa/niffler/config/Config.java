@@ -25,6 +25,7 @@ public interface Config {
     public String currencyUrl();
 
     public String dbUrl();
+
     default int dbPort(){
         return 5432;
     };

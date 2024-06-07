@@ -12,8 +12,8 @@ import static okhttp3.logging.HttpLoggingInterceptor.*;
 import static okhttp3.logging.HttpLoggingInterceptor.Level.BODY;
 
 public class ApiClient {
-    private static final Config CFG = Config.getInstance();
 
+    private static final Config CFG = Config.getInstance();
 
     protected final OkHttpClient okHttpClient;
 
@@ -46,7 +46,6 @@ public class ApiClient {
     public ApiClient(String baseUrl, boolean followRedirect, Converter.Factory factory) {
         this(baseUrl, followRedirect, factory, BODY);
     }
-
 
     public ApiClient(String baseUrl,
                      boolean followRedirect,

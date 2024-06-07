@@ -89,8 +89,6 @@ public class GatewayApiClient extends ApiClient {
         return gatewayApi.getTotalStatistic(bearerToken).execute().body();
     }
 
-    ;
-
     public UserJson currentUser(String bearerToken) throws IOException {
         return gatewayApi.currentUser(bearerToken).execute().body();
     }

@@ -34,7 +34,7 @@ public class HttpWebSpendingTest extends BaseTest{
                 .doLogin(username, password);
     }
     @GenerateCategory(
-            category = "Обучение22311734",
+            category = "Обучение2",
             username = username
     )
     @GenerateSpend(

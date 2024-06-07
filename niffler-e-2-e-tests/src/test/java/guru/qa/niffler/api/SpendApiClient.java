@@ -9,8 +9,6 @@ import java.io.IOException;
 public class SpendApiClient extends ApiClient {
 
     private static final Config CFG = Config.getInstance();
-
-
     private SpendApi spendApi;
 
     public SpendApiClient() {

@@ -83,5 +83,4 @@ public interface GatewayApi {
 
     @POST("/api/users/update")
     Call<UserJson> updateUserInfo(@Header("Authorization") String bearerToken);
-
 }

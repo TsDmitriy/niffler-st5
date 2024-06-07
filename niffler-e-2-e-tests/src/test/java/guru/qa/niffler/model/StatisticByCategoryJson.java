@@ -13,5 +13,4 @@ public record StatisticByCategoryJson(
         Double totalInUserDefaultCurrency,
         @JsonProperty("spends")
         List<SpendJson> spends) {
-
 }

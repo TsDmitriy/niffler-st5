@@ -42,7 +42,7 @@ public class HibernateSpendingTest extends BaseTest{
                 .doLogin(username, password);
     }
     @GenerateCategory(
-            category = "Обучение513212212",
+            category = "Обучение24444498",
             username = username
     )
     @GenerateSpend(
