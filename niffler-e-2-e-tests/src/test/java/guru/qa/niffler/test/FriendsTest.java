@@ -14,12 +14,12 @@ import static guru.qa.niffler.jupiter.annotation.User.Selector.INVITE_RECEIVED;
 import static guru.qa.niffler.jupiter.annotation.User.Selector.INVITE_SENT;
 
 @ExtendWith({UsersQueueExtension.class, BrowserExtension.class})
-public class FriendsTest {
+public class FriendsTest extends BaseTest {
 
     @Test
     void testCheckFriendIsPresent(@User(selector = FRIEND) UserJson userForTest) {
 
-        open("http://127.0.0.1:3000/main", WelcomePage.class)
+        open(CFG.frontUrl(), WelcomePage.class)
                 .openLoginPage()
                 .doLogin(userForTest.username(), userForTest.testData().password())
                 .goToPeoplePage()
@@ -29,7 +29,7 @@ public class FriendsTest {
     @Test
     void testCheckFriendIsInviteSent(@User(selector = INVITE_SENT) UserJson userForTest) {
 
-        open("http://127.0.0.1:3000/main", WelcomePage.class)
+        open(CFG.frontUrl(), WelcomePage.class)
                 .openLoginPage()
                 .doLogin(userForTest.username(), userForTest.testData().password())
                 .goToPeoplePage()
@@ -39,7 +39,7 @@ public class FriendsTest {
 
     @Test
     void testCheckFriendInvitationReceived(@User(selector = INVITE_RECEIVED) UserJson userForTest) {
-        open("http://127.0.0.1:3000/main", WelcomePage.class)
+        open(CFG.frontUrl(), WelcomePage.class)
                 .openLoginPage()
                 .doLogin(userForTest.username(), userForTest.testData().password())
                 .goToPeoplePage()
@@ -50,7 +50,7 @@ public class FriendsTest {
     void testCheckFriendsAndInvitationReceived(@User(selector = FRIEND) UserJson userForTest,
                                                @User(selector = INVITE_SENT) UserJson userForTest2) {
 
-        open("http://127.0.0.1:3000/main", WelcomePage.class)
+        open(CFG.frontUrl(), WelcomePage.class)
                 .openLoginPage()
                 .doLogin("DOG", "DOG")
                 .goToPeoplePage()

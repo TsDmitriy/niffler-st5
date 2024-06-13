@@ -15,7 +15,7 @@ import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.open;
 
 @JdbcTest
-public class JdbcWebSpendingTest {
+public class JdbcWebSpendingTest extends BaseTest{
 
     private MainPage mainPage;
     private final String username = "dotsarev";
@@ -27,7 +27,7 @@ public class JdbcWebSpendingTest {
 
     @BeforeEach
     void doLogin() {
-        mainPage = open("http://127.0.0.1:3000/main", WelcomePage.class)
+        mainPage = open(CFG.frontUrl(), WelcomePage.class)
                 .openLoginPage()
                 .doLogin(username, password);
     }
