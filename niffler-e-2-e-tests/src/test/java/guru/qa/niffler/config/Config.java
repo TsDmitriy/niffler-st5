@@ -10,8 +10,8 @@ public interface Config {
         if ("local".equals(env)){
             return LocalConfig.instance;
         }
-        else if ("local".equals(env)){
-            return LocalConfig.instance;
+        else if ("docker".equals(env)){
+            return DockerConfig.instance;
         }
         return  LocalConfig.instance;
     }

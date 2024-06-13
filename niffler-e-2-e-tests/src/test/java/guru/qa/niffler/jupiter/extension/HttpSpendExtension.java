@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.util.Date;
 
 public class HttpSpendExtension extends AbstractSpendExtension{
-    private static final Config CFG = Config.getInstance();
+
     private final SpendApiClient spendApiClient = new SpendApiClient();
 
     @Override

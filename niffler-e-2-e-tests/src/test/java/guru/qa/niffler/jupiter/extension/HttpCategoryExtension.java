@@ -16,7 +16,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 import java.io.IOException;
 
 public class HttpCategoryExtension extends AbstractCategoryExtension {
-    private static final Config CFG = Config.getInstance();
+
     private final SpendApiClient spendApiClient = new SpendApiClient();
 
     @Override
