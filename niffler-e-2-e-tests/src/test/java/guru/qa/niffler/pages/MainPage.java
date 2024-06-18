@@ -5,6 +5,7 @@ import com.codeborne.selenide.SelectorMode;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
+import lombok.Getter;
 
 import static com.codeborne.selenide.CollectionCondition.size;
 import static com.codeborne.selenide.Condition.text;
@@ -24,6 +25,12 @@ public class MainPage extends BasePage<MainPage> {
     private final SelenideElement peopleLink = $("[href='/people']")
             .as("Кнопка перехода на странице People");
     private final SelenideElement f = $("[id=react-select-3-placeholder]");
+
+    public ReactCalendar getCalendar() {
+        return calendar;
+    }
+
+    private final ReactCalendar calendar = new ReactCalendar();
 
     @Override
     public MainPage waitForPageLoaded() {
