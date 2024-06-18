@@ -1,34 +1,26 @@
 package guru.qa.niffler.test;
 
-import com.codeborne.selenide.Configuration;
-import com.codeborne.selenide.SelenideElement;
-import com.codeborne.selenide.WebDriverRunner;
-import guru.qa.niffler.api.GatewayApiClient;
+import com.codeborne.selenide.ElementsCollection;
 import guru.qa.niffler.jupiter.annotation.GenerateCategory;
 import guru.qa.niffler.jupiter.annotation.GenerateSpend;
-import guru.qa.niffler.jupiter.annotation.meta.HttpWebTest;
 import guru.qa.niffler.jupiter.annotation.meta.JdbcTest;
+import guru.qa.niffler.jupiter.annotation.meta.Spends;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.pages.MainPage;
 import guru.qa.niffler.pages.WelcomePage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.MutableCapabilities;
-import org.openqa.selenium.chrome.ChromeOptions;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
-
+import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.open;
+import static guru.qa.niffler.condition.SpendsCondition.spendsInTable;
 
 @JdbcTest
-public class HibernateSpendingTest extends BaseTest{
+public class HibernateSpendingTest extends BaseTest {
 
     final String frontUrl = CFG.frontUrl();
+    private static String DATE_FORMATTER = "dd MMM yy";
 
     private MainPage mainPage;
     private final String username = "DIMA";
@@ -41,21 +33,35 @@ public class HibernateSpendingTest extends BaseTest{
                 .openLoginPage()
                 .doLogin(username, password);
     }
+
     @GenerateCategory(
-            category = "Обучение24444498",
+            category = "Обучение1fr223e",
             username = username
     )
-    @GenerateSpend(
-            description = "QA.GURU Advanced 44443",
-            amount = 65000.00,
-            currency = CurrencyValues.RUB
-    )
+
+    @Spends({
+            @GenerateSpend(
+                    description = "QA.GURU Advanced443233",
+                    amount = 65000.22,
+                    currency = CurrencyValues.RUB
+            ),
+
+            @GenerateSpend(
+                    description = "QA.GURU Advanced написание диплома1232",
+                    amount = 15000.123,
+                    currency = CurrencyValues.RUB
+            )
+    })
+
     @Test
-    void spendingShouldBeDeletedAfterTableAction(SpendJson spendJson) {
+    void spendingShouldBeDeletedAfterTableAction(SpendJson[] spendJson) {
         final int expectedSize = 0;
 
-        SelenideElement rowWithSpending = mainPage
-                .findRowWithSpendingByDescription(spendJson.description());
+        SpendJson spendJsonFirst = spendJson[0];
+
+        ElementsCollection spends = mainPage.getRowsSpendingTable();
+
+        spends.shouldHave(spendsInTable(spendJson));
 
     }
 }
