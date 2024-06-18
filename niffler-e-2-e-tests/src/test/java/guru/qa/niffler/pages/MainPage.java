@@ -74,4 +74,9 @@ public class MainPage extends BasePage<MainPage> {
         peopleLink.click();
         return new PeoplePage();
     }
+
+    @Step("Получить траты")
+    public ElementsCollection getRowsSpendingTable() {
+        return rowsSpendingTable;
+    }
 }
