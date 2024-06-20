@@ -97,4 +97,18 @@ public class UserAuthEntity implements Serializable {
         userAuthEntity.setAuthorities(List.of(read, write));
         return userAuthEntity;
     }
+
+    @Override
+    public String toString() {
+        return "UserAuthEntity{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", enabled=" + enabled +
+                ", accountNonExpired=" + accountNonExpired +
+                ", accountNonLocked=" + accountNonLocked +
+                ", credentialsNonExpired=" + credentialsNonExpired +
+                ", authorities=" + authorities +
+                '}';
+    }
 }

@@ -3,6 +3,7 @@ package guru.qa.niffler.data;
 import guru.qa.niffler.config.Config;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 @RequiredArgsConstructor
 public enum DataBase {
@@ -17,5 +18,9 @@ public enum DataBase {
 
     public String getJdbcUrl() {
         return String.format(jdbcUrl, CFG.dbUrl(), CFG.dbPort());
+    }
+
+    public String getP6spyUrl() {
+        return "jdbc:p6spy:" + StringUtils.substringAfter(getJdbcUrl(), ":");
     }
 }
