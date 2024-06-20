@@ -132,4 +132,19 @@ public class UserEntity implements Serializable {
         userEntity.setSurname(userJson.surname());
         return userEntity;
     }
+
+    @Override
+    public String toString() {
+        return "UserEntity{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", currency=" + currency +
+                ", firstname='" + firstname + '\'' +
+                ", surname='" + surname + '\'' +
+                ", photo=" + Arrays.toString(photo) +
+                ", photoSmall=" + Arrays.toString(photoSmall) +
+                ", friendshipRequests=" + friendshipRequests +
+                ", friendshipAddressees=" + friendshipAddressees +
+                '}';
+    }
 }
